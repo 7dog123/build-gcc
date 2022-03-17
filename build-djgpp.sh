@@ -297,7 +297,7 @@ if [ ! -z ${WATT32_VERSION} ]; then
 
   echo "${CFLAGS_FOR_TARGET}" > configure-options
 
-  export TARGET CFLAGS_FOR_TARGET
+  export CFLAGS_FOR_TARGET
   ${MAKE_J} -f djgpp.mak || exit 1
 
   echo "Installing Watt-32"
