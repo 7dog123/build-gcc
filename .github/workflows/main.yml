@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, macos-latest ]
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
         build-type: [ clean ]
         env:
           -
@@ -77,6 +77,23 @@ jobs:
           echo "CCACHE_DIR=~/.ccache" >> $GITHUB_ENV
           echo "$(brew --prefix)/opt/ccache/libexec" >> $GITHUB_PATH
 
+      - name: Install dependencies (windows MINGW64)
+        if: contains(matrix.os, 'windows')
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          install: |
+            base-devel git make texinfo flex bison patch binutils dos2unix tar
+            bzip2 zlib xz unzip libtool cmake help2man nasm ccache
+          update: true
+          
+      - shell: msys2 {0}
+        if: contains(matrix.os, 'windows')
+        run: |
+          mkdir -p ~/.ccache
+          echo "CCACHE_DIR=~/.ccache" >> $GITHUB_ENV
+          echo "/usr/lib/ccache" >> $GITHUB_PATH
+        
       - name: Cache sources
         uses: actions/cache@v3
         with:
